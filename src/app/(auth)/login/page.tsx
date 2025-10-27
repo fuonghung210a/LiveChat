@@ -3,8 +3,9 @@
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
-import Button from "./_components/Button";
+import Button from "@/src/components/common/Button";
 import { BUTTON_VARIANTS } from "@/src/constants/button";
+import Input from "@/src/components/common/Input";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -31,7 +32,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-center min-h-screen">
             <form
                 onSubmit={handleSubmit}
-                className="p-6 rounded-2xl shadow-md w-96"
+                className="p-6 rounded-2xl shadow-md w-96 bg-gray-50"
             >
                 <div className="flex items-center flex-col justify-center pb-5">
                     <Image
@@ -46,29 +47,21 @@ export default function LoginPage() {
                     </h2>
                 </div>
                 <div>
-                    <div className="group">
-                        <h2 className="text-md pl-0.5 font-bold">Tài khoản</h2>
-                        <input
-                            type="email"
-                            placeholder="Nhập tài khoản"
-                            className="border p-2 w-full mb-2 rounded-md"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <h2 className="text-md pl-0.5 font-bold">Mật khẩu</h2>
-                        <input
-                            type="password"
-                            placeholder="Nhập mật khẩu"
-                            className="border p-2 w-full mb-2 rounded-md"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        {error && (
-                            <p className="text-red-500 text-sm">{error}</p>
-                        )}
-                    </div>
+                    <Input
+                        variant="email"
+                        label="Email"
+                        placeholder="Nhập email..."
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    ></Input>
+                    <Input
+                        variant="password"
+                        label="Password"
+                        placeholder="Nhập mật khẩu..."
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    ></Input>
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
                     <Button variant={BUTTON_VARIANTS.PRIMARY}>Đăng nhập</Button>
                 </div>
             </form>
