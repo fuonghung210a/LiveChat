@@ -9,20 +9,48 @@ import AuthFormCard from "@/src/components/auth/AuthFormCard";
 import AuthHeader from "@/src/components/auth/AuthHeader";
 import AuthLayout from "@/src/components/auth/AuthLayout";
 import { useAppDispatch, useAppSelector } from "@/src/hooks/reduxHooks";
+import { authService } from "@/src/services/api/auth";
+import { login as loginAction } from "@/src/store/userSlice";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
 
-  async function handleSubmit(e: React.FormEvent) {}
+  async function handleLogin(e: React.FormEvent) {
+    console.log("email:", email, "Password", password);
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      // Call authService to login
+      const response = await authService.login({ email, password });
+
+      // Dispatch Redux action to update state
+      dispatch(
+        loginAction({
+          name: response.user.name,
+          email: response.user.email,
+          token: response.token,
+        }),
+      );
+    } catch (err: unknown) {
+      const message = (err as { response?: { data?: { message?: string } } })
+        ?.response?.data?.message;
+      setError(message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <AuthLayout>
-      <AuthFormCard onSubmit={handleSubmit}>
+      <AuthFormCard onSubmit={handleLogin}>
         <AuthHeader
           logoSrc="/chatapp.png"
           logoAlt="login"
@@ -45,7 +73,9 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
           <AuthErrorMessage message={error} />
-          <Button variant={BUTTON_VARIANTS.PRIMARY}>Đăng nhập</Button>
+          <Button variant={BUTTON_VARIANTS.PRIMARY} loading={loading}>
+            Đăng nhập
+          </Button>
         </div>
       </AuthFormCard>
     </AuthLayout>
