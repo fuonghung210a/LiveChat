@@ -1,4 +1,4 @@
-import axiosInstance from "@/src/lib/axios";
+import axiosInstance, { endpoints } from "@/src/lib/axios";
 export interface User {
   id: number;
   name: string;
@@ -25,7 +25,7 @@ export const authService = {
   // Login
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const response = await axiosInstance.post<LoginResponse>(
-      "/auth/login",
+      endpoints.auth.login,
       credentials,
     );
 
@@ -39,7 +39,7 @@ export const authService = {
 
   logout: async (): Promise<void> => {
     try {
-      await axiosInstance.post("/auth/logout");
+      await axiosInstance.post(endpoints.auth.logout);
     } finally {
       localStorage.removeItem("token");
     }
@@ -47,7 +47,7 @@ export const authService = {
 
   register: async (credentials: RegisterCredential): Promise<LoginResponse> => {
     const response = await axiosInstance.post<LoginResponse>(
-      "/auth/register",
+      endpoints.auth.register,
       credentials,
     );
 
@@ -60,7 +60,7 @@ export const authService = {
   },
 
   getCurrentUser: async (): Promise<User> => {
-    const response = await axiosInstance.get<User>("/auth/me");
+    const response = await axiosInstance.get<User>(endpoints.auth.me);
 
     return response.data;
   },

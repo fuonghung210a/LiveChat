@@ -43,3 +43,19 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+
+// Endpoints definition
+
+// const VERSION_PREFIX = "v1"; // Use later
+
+export const endpoints = {
+  auth: {
+    login: "/auth/login",
+    logout: "/auth/logout",
+    register: "/auth/register",
+    me: "/auth/me",
+  },
+  // Continue to define Endpoints here!
+};
+
+
