@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/src/components/common/Button";
 import Input from "@/src/components/common/Input";
 import { BUTTON_VARIANTS } from "@/src/constants/button";
@@ -12,8 +12,15 @@ import { useAppDispatch, useAppSelector } from "@/src/hooks/reduxHooks";
 import { authService } from "@/src/services/api/auth";
 import { login as loginAction } from "@/src/store/userSlice";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get the redirect URL from query params (e.g., /login?redirect=/dashboard)
+  const redirectURL = searchParams.get("redirect") || "/";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,8 +29,14 @@ export default function LoginPage() {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
 
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user.token) {
+      router.push(redirectURL);
+    }
+  }, [user.token, router, redirectURL]);
+
   async function handleLogin(e: React.FormEvent) {
-    console.log("email:", email, "Password", password);
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -40,6 +53,8 @@ export default function LoginPage() {
           token: response.token,
         }),
       );
+
+      router.push(redirectURL);
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })
         ?.response?.data?.message;
